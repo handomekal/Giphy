@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Giphy</title>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />
+</head>
+
+<body>
+    <button data-person="Shaquille O'Neal">
+        Superman
+    </button>
+    <button data-person="Kobe Bryant">
+        Black Mamba
+    </button>
+    <button data-person="Derek Fisher">
+        Dfish
+    </button>
+    <button data-person="Kareem Abdul-Jabar">
+        Sky Hook
+    </button>
+    <button data-person="Byron Scott">
+        Showtime
+    </button>
+    <button data-person="Magic Johnson">
+        Magic
+    </button>
+    
+    <br>
+
+    <div id="buttons-view"></div>
+    <form id="giphy-form">
+    <label for="giphy-input">Add a Giphy</label>
+    <input type="text" id="giphy-input">
+    <input id="add-giphy" type="submit" value="Add a Giphy">
+    </form>
+    <div id="giphy-view"></div>
+    
+    <br>
+
+
+    <div id="gifs-appear-here"></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    function displayGiphy() {
+        var person = $(this).attr("data-name");
+        var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + person + "&api_key=HzraIsIvGg2JaTuLtEcUyLPpCivQzT64&limit=10"
+        $.ajax({
+            url: queryURL,
+            method: "GET",
+        })
+    }
+        $("button").on("click", function () {
+            var person = $(this).attr("data-person");
+            var apiKey = "HzraIsIvGg2JaTuLtEcUyLPpCivQzT64"
+            var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + person + "&api_key=HzraIsIvGg2JaTuLtEcUyLPpCivQzT64&limit=10"
+            $.ajax({
+                url: queryURL,
+                method: "GET",
+            })
+             
+             
+
+
+                .then(function (response) {
+                    var results = response.data;
+                    console.log(results);
+                    for (var i = 0; i < results.length; i++) {
+                        if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
+                            var gifDiv = $("<div>");
+                            var rating = results[i].rating;
+                            var p = $("<p>").text("Rating: " + rating);
+                            var personImage = $("<img>");
+                            personImage.attr("src", results[i].images.original_still.url);
+                            personImage.attr("data-state", "still");
+                            personImage.attr("data-still", results[i].images.original_still.url);
+                            personImage.attr("data-animate", results[i].images.original.url);
+
+                            gifDiv.append(p);
+
+                            personImage.click(function () {
+                                var state = $(this).attr("data-state");
+                                
+                                if (state === "still") {
+                                    $(this).attr("src", $(this).attr("data-animate"));
+                                    $(this).attr("data-state", "animate");
+                                } else {
+                                    $(this).attr("src", $(this).attr("data-still"));
+                                    $(this).attr("data-state", "still");
+                                };
+                            });
+                            gifDiv.append(personImage);
+                            $("#gifs-appear-here").prepend(gifDiv)
+
+
+
+                        }
+                    }
+                })
+        });
+
+      
+
+    </script>
+</body>
+
+</html>
